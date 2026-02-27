@@ -4,12 +4,14 @@ import { ref } from 'vue'
 
 export const useSecretStore = defineStore('secret', () =>{
   //state
-
+  const secret = ref("zebi")
   //getter
 
 
   //mutation
-
+  const setSecret = (data) => {
+    secret.value = data;
+  }
 
 
 
@@ -21,7 +23,7 @@ export const useSecretStore = defineStore('secret', () =>{
 
   return {
     //state
-
+    secret,
     //getter
 
     //mutation

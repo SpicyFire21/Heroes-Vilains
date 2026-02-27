@@ -31,15 +31,16 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useOrganizationStore } from '@/stores'
+import {useOrganizationStore, useSecretStore} from '@/stores'
 
 const router = useRouter()
 const orgStore = useOrganizationStore()
+const secretStore = useSecretStore()
 
 const secret = ref('')
 
 const saveSecret = () => {
-  orgStore.setSecret(secret.value)
+  secretStore.setSecret(secret.value)
   router.push('/orgs')
 }
 </script>

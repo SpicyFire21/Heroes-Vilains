@@ -61,9 +61,10 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useOrganizationStore } from '@/stores'
+import {useOrganizationStore, useSecretStore} from '@/stores'
 
 const orgStore = useOrganizationStore()
+const secretStore = useSecretStore()
 const router = useRouter()
 
 const dialog = ref(false)
@@ -84,7 +85,7 @@ onMounted(async () => {
 
 const selectOrg = async (org) => {
   const id = org._id
-  const secret = orgStore.secret;
+  const secret = secretStore.secret;
   console.log(org)
   await orgStore.getOrganizationById(id,secret)
   await router.push(`/orgs/${id}`)

@@ -86,7 +86,7 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {useOrganizationStore, useTeamsStore} from '@/stores'
+import {useOrganizationStore, useSecretStore, useTeamsStore} from '@/stores'
 import CustomDialog from "@/components/CustomDialog.vue";
 
 const router = useRouter()
@@ -94,6 +94,7 @@ const router = useRouter()
 const route = useRoute()
 const orgStore = useOrganizationStore()
 const teamStore = useTeamsStore()
+const secretStore = useSecretStore()
 
 const loading = ref(true)
 const showDeleteDialog = ref(false)
@@ -103,7 +104,7 @@ const org = computed(() => orgStore.currentOrg)
 
 onMounted(async () => {
   loading.value = true
-  await orgStore.getOrganizationById(route.params.id,orgStore.secret)
+  await orgStore.getOrganizationById(route.params.id,secretStore.secret)
   loading.value = false
 })
 
@@ -117,7 +118,7 @@ function closeDeleteDialog(){
 
 async function deleteTeam(){
   console.log(selectedTeam.value._id)
-  await orgStore.removeTeamFromOrg({idTeam:selectedTeam.value._id},orgStore.secret)
+  await orgStore.removeTeamFromOrg({idTeam:selectedTeam.value._id},secretStore.secret)
   showDeleteDialog.value = false
 }
 

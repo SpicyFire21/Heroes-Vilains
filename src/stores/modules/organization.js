@@ -8,7 +8,6 @@ export const useOrganizationStore = defineStore('organizations', () =>{
     //state
     const orgs = ref([])
     const currentOrg = ref(null)
-    const secret = ref("zebi")
     //getter
 
 
@@ -20,9 +19,7 @@ export const useOrganizationStore = defineStore('organizations', () =>{
     const setOrg = (data) => {
         currentOrg.value = data[0];
     };
-    const setSecret = (data) => {
-      secret.value = data;
-    }
+
     const pushOrg = (data) => {
       orgs.value.push(data)
     }
@@ -110,13 +107,13 @@ export const useOrganizationStore = defineStore('organizations', () =>{
         //state
         orgs,
         currentOrg,
-        secret,
+
         //getter
 
         //mutation
         setOrgs,
         setOrg,
-      setSecret,
+
 
         //action
         getOrganizations,
