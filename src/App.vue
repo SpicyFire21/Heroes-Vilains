@@ -41,6 +41,7 @@
     <v-main>
       <v-container fluid>
         <router-view />
+        <ErrorDialog/>
       </v-container>
     </v-main>
   </v-app>
@@ -49,6 +50,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import ErrorDialog from "@/components/ErrorDialog.vue";
 
 const drawer = ref(false)
 const router = useRouter()

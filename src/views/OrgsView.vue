@@ -85,7 +85,7 @@ onMounted(async () => {
 const selectOrg = async (org) => {
   const id = org._id
   const secret = orgStore.secret;
-  console.log(secret)
+  console.log(org)
   await orgStore.getOrganizationById(id,secret)
   await router.push(`/orgs/${id}`)
 }

@@ -8,7 +8,11 @@ export const useTeamsStore = defineStore('teams', () =>{
     const teams = ref([])
     const currentTeam = ref(null)
     //getter
-
+    const getTeamById = (id) =>{
+      const res = teams.value.find(t=>t._id === id)
+      console.log(res)
+      return res
+    }
 
     //mutation
     const setTeams = (data) => {
@@ -19,7 +23,9 @@ export const useTeamsStore = defineStore('teams', () =>{
         currentTeam.value = data;
 
     };
-
+    const addTeam = (data) =>{
+      teams.value.push(data)
+    }
 
 
 
@@ -36,6 +42,18 @@ export const useTeamsStore = defineStore('teams', () =>{
             console.error('store.js | Erreur lors de la connexion:', error);
         }
     }
+  const createTeam = async (payload) =>{
+    try {
+
+      let response = await teamsService.createTeam(payload);
+      if (response.error === 0) {
+        addTeam(response.data);
+
+      }
+    } catch (error) {
+      console.error('store.js | Erreur lors de la connexion:', error);
+    }
+  }
 
 
 
@@ -44,12 +62,13 @@ export const useTeamsStore = defineStore('teams', () =>{
         teams,
         currentTeam,
         //getter
-
+      getTeamById,
         //mutation
         setTeams,
         setTeam,
 
         //action
-        getTeams
+        getTeams,
+        createTeam
     }
 })

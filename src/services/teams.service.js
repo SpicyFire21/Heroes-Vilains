@@ -17,6 +17,27 @@ async function getTeams(){
     return response
 }
 
+
+
+async function createTeamFromAPI(payload){
+
+  return postRequest("/teams/create",payload,"CREATE-TEAM");
+}
+async function createTeam(payload){
+  let response = null;
+
+  try {
+    // response = await loginUserFromLocalSource(data);
+    response = await createTeamFromAPI(payload);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible de créé la team'  }
+  }
+  return response
+}
+
+
 export default {
-    getTeams
+    getTeams,
+  createTeam
 }

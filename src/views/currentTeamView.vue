@@ -1,22 +1,16 @@
 <template>
   <v-container>
-    <!-- Chargement -->
-    <v-progress-linear
-      v-if="loading"
-      indeterminate
-      class="mb-4"
-    />
-
     <!-- Organisation -->
-    <v-card v-else-if="org">
+    <v-card v-if="team" >
       <v-card-title>
-        {{ org.name }}
+        {{ team.name }}
+        
       </v-card-title>
 
       <v-card-text>
         <v-row>
           <v-col cols="12" md="6">
-            <strong>ID :</strong> {{ org._id }}
+            <strong>ID :</strong> {{ team._id }}
           </v-col>
 
 
@@ -25,20 +19,21 @@
             <strong>Équipe(s)</strong>
 
             <v-list
-              v-if="org.teams && org.teams.length"
+              v-if="team.members && team.members.length"
               density="compact"
             >
+
               <v-list-item
-                v-for="team in org.teams"
-                :key="team._id"
+                v-for="item in team.members"
+                :key="item"
               >
                 <v-list-item-title>
-                  {{ team.name }}
+                  {{ item }}
                 </v-list-item-title>
-                <v-btn @click="openTeam(team)">
+                <v-btn>
                   voir
                 </v-btn>
-                <v-btn @click="openDeleteDialog(team)">
+                <v-btn @click="openDeleteDialog(item)">
                   supprimer
                 </v-btn>
               </v-list-item>
@@ -51,14 +46,13 @@
         </v-row>
       </v-card-text>
     </v-card>
-
     <!-- Erreur -->
     <v-alert
       v-else
       type="error"
       variant="tonal"
     >
-      Organisation introuvable
+      équipe introuvable
     </v-alert>
   </v-container>
 
@@ -86,26 +80,18 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue'
 import {useRoute, useRouter} from 'vue-router'
-import {useOrganizationStore, useTeamsStore} from '@/stores'
+import { useTeamsStore} from '@/stores'
 import CustomDialog from "@/components/CustomDialog.vue";
 
+const route = useRoute()
 const router = useRouter()
 
-const route = useRoute()
-const orgStore = useOrganizationStore()
 const teamStore = useTeamsStore()
 
-const loading = ref(true)
 const showDeleteDialog = ref(false)
 const selectedTeam = ref(null)
 
-const org = computed(() => orgStore.currentOrg)
-
-onMounted(async () => {
-  loading.value = true
-  await orgStore.getOrganizationById(route.params.id,orgStore.secret)
-  loading.value = false
-})
+const team = computed(() => teamStore.currentTeam)
 
 function openDeleteDialog(team){
   showDeleteDialog.value = true;
@@ -116,19 +102,15 @@ function closeDeleteDialog(){
 }
 
 async function deleteTeam(){
-  console.log(selectedTeam.value._id)
-  await orgStore.removeTeamFromOrg({idTeam:selectedTeam.value._id},orgStore.secret)
+
   showDeleteDialog.value = false
 }
 
-async function openTeam(team){
-console.log(team)
-  teamStore.setTeam(team)
-  console.log(teamStore.currentTeam)
-  await router.push(`/teams/${team._id}`)
-
-}
-
+onMounted(async()=>{
+  if(!teamStore.currentTeam){
+    await router.push({name: 'teams'})
+  }
+})
 
 </script>
 

@@ -7,6 +7,12 @@ const axiosAgent = axios.create({
 })
 
 
+
+
+
+
+
+
 function handleError(serviceName, err) {
     if (err.response) {
         console.log("ERROR while calling SERVICE " + serviceName + ": " + JSON.stringify(err.response));

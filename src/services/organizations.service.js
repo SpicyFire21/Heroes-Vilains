@@ -1,4 +1,4 @@
-import {deleteRequest, getRequest, postRequest} from "@/services/axios.service";
+import {deleteRequest, getRequest, patchRequest, postRequest} from "@/services/axios.service";
 
 async function getOrganizationsFromAPI(){
 
@@ -53,9 +53,26 @@ async function createOrganization(data){
   return response
 }
 
+async function removeTeamFromAPI(data,secret){
+  console.log("ca supprime ouuu ??")
+  return patchRequest(`/orgs/removeteam?org-secret=${secret}`,data,"DELETE-TEAM-FROM-ORG");
+}
+async function removeTeam(data,secret){
+  let response = null;
+
+  try {
+    response = await removeTeamFromAPI(data,secret);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible de supprimer l\'équipe de l\'organizations'  }
+  }
+  return response
+}
+
 
 export default {
     getOrganizations,
     getOrganizationById,
-  createOrganization
+  createOrganization,
+  removeTeam
 }
