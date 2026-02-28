@@ -1,7 +1,7 @@
 import axios from 'axios'
 import {useAuthStore, useSecretStore} from "@/stores/index.js";
 
-export const API_URL = "https://apidemo.iut-bm.univ-fcomte.fr/herocorp";
+export const API_URL = "https://apidemo.iut-bm.univ-fcomte.fr";
 
 const axiosAgent = axios.create({
     baseURL: API_URL

@@ -6,6 +6,7 @@ import TeamsView from '@/views/TeamsView.vue'
 import currentOrgView from '@/views/currentOrgView.vue'
 import currentTeamView from "@/views/currentTeamView.vue";
 import {useSecretStore} from "@/stores/index.js";
+import LoginView from "@/views/LoginView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,7 +17,11 @@ const router = createRouter({
       name: 'secret',
       component: SecretView
     },
-
+    {
+      path: '/auth',
+      name: 'auth',
+      component: LoginView
+    },
     {
       path: '/orgs',
       name: 'orgs',

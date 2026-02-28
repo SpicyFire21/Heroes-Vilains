@@ -2,7 +2,7 @@ import {deleteRequest, getRequest, patchRequest, postRequest} from "@/services/a
 
 async function getOrganizationsFromAPI(){
 
-    return getRequest("/orgs/get","GET-ORGS");
+    return getRequest("/herocorp/orgs/get","GET-ORGS");
 }
 async function getOrganizations(){
     let response = null;
@@ -19,7 +19,7 @@ async function getOrganizations(){
 
 async function getOrganizationByIdFromAPI(id,secret){
 
-  return getRequest(`/orgs/getbyid/${id}?org-secret=${secret}`,"GET-ORG-BY-ID");
+  return getRequest(`/herocorp/orgs/getbyid/${id}?org-secret=${secret}`,"GET-ORG-BY-ID");
 }
 async function getOrganizationById(id,secret){
   let response = null;
@@ -38,7 +38,7 @@ async function getOrganizationById(id,secret){
 
 async function createOrganizationFromAPI(data){
 
-  return postRequest(`/orgs/create`,data,"GET-ORG-BY-ID");
+  return postRequest(`/herocorp/orgs/create`,data,"GET-ORG-BY-ID");
 }
 async function createOrganization(data){
   let response = null;
@@ -55,7 +55,7 @@ async function createOrganization(data){
 
 async function removeTeamFromAPI(data,secret){
   console.log("ca supprime ouuu ??")
-  return patchRequest(`/orgs/removeteam?org-secret=${secret}`,data,"DELETE-TEAM-FROM-ORG");
+  return patchRequest(`/herocorp/orgs/removeteam?org-secret=${secret}`,data,"DELETE-TEAM-FROM-ORG");
 }
 async function removeTeam(data,secret){
   let response = null;

@@ -2,7 +2,7 @@ import {deleteRequest, getRequest, postRequest} from "@/services/axios.service";
 
 async function getHeroesFromAPI(){
 
-    return getRequest("/heroes/getaliases","GET-HEROES");
+    return getRequest("/herocorp/heroes/getaliases","GET-HEROES");
 }
 async function getHeroes(){
     let response = null;

@@ -2,7 +2,7 @@ import {deleteRequest, getRequest, postRequest} from "@/services/axios.service";
 
 async function getTeamsFromAPI(){
 
-    return getRequest("/teams/get","GET-TEAMS");
+    return getRequest("/herocorp/teams/get","GET-TEAMS");
 }
 async function getTeams(){
     let response = null;
@@ -21,7 +21,7 @@ async function getTeams(){
 
 async function createTeamFromAPI(payload){
 
-  return postRequest("/teams/create",payload,"CREATE-TEAM");
+  return postRequest("/herocorp/teams/create",payload,"CREATE-TEAM");
 }
 async function createTeam(payload){
   let response = null;
