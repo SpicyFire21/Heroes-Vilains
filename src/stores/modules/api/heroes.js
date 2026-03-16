@@ -19,7 +19,9 @@ export const useHeroesStore = defineStore('heroes', () =>{
         currentHero.value = data;
 
     };
-
+    const addHero = (data) => {
+      heroes.value.push(data)
+    }
 
 
 
@@ -33,9 +35,21 @@ export const useHeroesStore = defineStore('heroes', () =>{
 
             }
         } catch (error) {
-            console.error('store.js | Erreur lors de la connexion:', error);
+            console.error('store.js | Erreur lors de la récupération de héroes:', error);
         }
     }
+  const createHero = async (data) =>{
+    try {
+
+      let response = await heroesService.createHero(data);
+      if (response.error === 0) {
+        addHero(response.data);
+
+      }
+    } catch (error) {
+      console.error('store.js | Erreur lors de la création du héro:', error);
+    }
+  }
 
 
 
@@ -51,6 +65,7 @@ export const useHeroesStore = defineStore('heroes', () =>{
 
         //action
         getHeroes,
+      createHero
 
     }
 })

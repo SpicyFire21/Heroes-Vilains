@@ -1,4 +1,4 @@
-import orgService from '@/services/organizations.service'
+import orgService from '@/services/organizations.service.js'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import {useErrorStore} from "@/stores/index.js";

@@ -14,7 +14,7 @@
       :headers="headers"
       :items="orgStore.orgs"
       item-key="id"
-      @click:row="selectOrg"
+
     >
       <template #item.actions="{ item }">
         <v-btn size="small" @click.stop="selectOrg(item)">

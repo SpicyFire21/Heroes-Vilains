@@ -7,6 +7,7 @@ import currentOrgView from '@/views/currentOrgView.vue'
 import currentTeamView from "@/views/currentTeamView.vue";
 import {useSecretStore} from "@/stores/index.js";
 import LoginView from "@/views/LoginView.vue";
+import HeroesView from "@/views/HeroesView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,7 +35,11 @@ const router = createRouter({
       component: currentOrgView,
       meta: { requiresSecret: true }
     },
-
+    {
+      path: '/heroes',
+      name: 'heroes',
+      component: HeroesView
+    },
 
     {
       path: '/teams',

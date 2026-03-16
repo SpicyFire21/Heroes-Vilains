@@ -2,15 +2,15 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 
-export const useSecretStore = defineStore('secret', () =>{
+export const useLayoutStore = defineStore('layout', () =>{
   //state
-  const secret = ref("zebi")
+  const drawer = ref(false)
   //getter
 
 
   //mutation
-  const setSecret = (data) => {
-    secret.value = data;
+  const updateDrawer = (data) => {
+    drawer.value = data
   }
 
 
@@ -20,14 +20,13 @@ export const useSecretStore = defineStore('secret', () =>{
 
 
 
-
   return {
     //state
-    secret,
+    drawer,
     //getter
 
     //mutation
-
+    updateDrawer
 
     //action
 

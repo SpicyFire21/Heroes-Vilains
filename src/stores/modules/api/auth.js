@@ -22,6 +22,7 @@ export const useAuthStore = defineStore('auth', () =>{
   const login = async (data) => {
     try {
       let response = await authService.login(data)
+
       if (response.error === 0){
         updateXSRFToken(response.data.xsrfToken)
         console.log(xsrfToken.value)

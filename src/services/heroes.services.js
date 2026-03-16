@@ -17,6 +17,24 @@ async function getHeroes(){
     return response
 }
 
+async function createHeroFromAPI(data){
+
+  return postRequest("/herocorp/heroes/create",data,"ADD-HERO");
+}
+async function createHero(data){
+  let response = null;
+
+  try {
+    // response = await loginUserFromLocalSource(data);
+    response = await createHeroFromAPI(data);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible de la création du hero'  }
+  }
+  return response
+}
+
 export default {
-    getHeroes
+    getHeroes,
+  createHero
 }

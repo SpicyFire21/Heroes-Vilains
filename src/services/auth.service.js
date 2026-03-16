@@ -1,7 +1,7 @@
 import {deleteRequest, getRequest, postRequest} from "@/services/axios.service";
 
 async function loginFromAPI(data){
-
+  console.log(data)
   return postRequest("/authapi/auth/signin",data,"POST-LOGIN");
 }
 async function login(data){

@@ -1,4 +1,4 @@
-import teamsService from '@/services/teams.service'
+import teamsService from '@/services/teams.service.js'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
