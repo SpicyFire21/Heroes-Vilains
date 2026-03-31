@@ -23,12 +23,15 @@ export const useOrganizationStore = defineStore('organizations', () =>{
     const pushOrg = (data) => {
       orgs.value.push(data)
     }
-  const removeTeam = (teamId) => {
-    if (!currentOrg.value || !Array.isArray(currentOrg.value.teams)) return
-
-    currentOrg.value.teams = currentOrg.value.teams.filter(
-      team => team._id !== teamId
-    )
+  const removeTeam = (obj) => {
+    if (!currentOrg.value?.teams) return
+    console.log(obj.idTeam)
+    currentOrg.value.teams = currentOrg.value.teams.filter(t => t._id !== obj.idTeam)
+  }
+  const pushTeam = (team) => {
+    if (!currentOrg.value) return
+    if (!currentOrg.value.teams) currentOrg.value.teams = []
+    currentOrg.value.teams.push(team)
   }
 
 
@@ -48,15 +51,13 @@ export const useOrganizationStore = defineStore('organizations', () =>{
         }
     }
 
-    const removeTeamFromOrg = async (teamid,secret) =>{
+    const removeTeamFromOrg = async (teamid) =>{
       try {
 
-        let response = await orgService.removeTeam(teamid,secret);
-
+        let response = await orgService.removeTeam(teamid);
         if (response.error === 0) {
           removeTeam(teamid)
 
-          console.log(response.data)
           // sliceTeam(response.data);
 
         } else {
@@ -69,6 +70,26 @@ export const useOrganizationStore = defineStore('organizations', () =>{
 
       }
     }
+
+  const addTeamToOrg = async (teamid) =>{
+    try {
+
+      let response = await orgService.addTeam(teamid);
+
+      if (response.error === 0) {
+        pushTeam(teamid)
+
+
+      } else {
+        console.warn(response.data)
+      }
+
+    } catch (error) {
+      console.error(error);
+      useErrorStore().setError(error)
+
+    }
+  }
 
     const getOrganizationById = async (id,secret) => {
       try {
@@ -118,7 +139,8 @@ export const useOrganizationStore = defineStore('organizations', () =>{
         //action
         getOrganizations,
         getOrganizationById,
-      createOrganization,
-      removeTeamFromOrg
+        createOrganization,
+        removeTeamFromOrg,
+        addTeamToOrg
     }
 })

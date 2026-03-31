@@ -1,4 +1,4 @@
-import {deleteRequest, getRequest, postRequest} from "@/services/axios.service";
+import {deleteRequest, getRequest, patchRequest, postRequest} from "@/services/axios.service";
 
 async function getTeamsFromAPI(){
 
@@ -36,8 +36,45 @@ async function createTeam(payload){
   return response
 }
 
+async function addHeroesToTeamFromAPI(payload){
+
+  return patchRequest("/herocorp/teams/addheroes",payload,"ADD-HEROES-TO-TEAM");
+}
+async function addHeroesToTeam(payload){
+  let response = null;
+
+  try {
+
+    response = await addHeroesToTeamFromAPI(payload);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible d\'ajouter le héro' }
+  }
+  return response
+}
+
+
+async function removeHeroesFromTeamFromAPI(payload){
+    console.log(payload)
+    return patchRequest("/herocorp/teams/removeheroes",payload,"REMOVE-HEROES-TO-TEAM");
+}
+async function removeHeroesFromTeam(payload){
+  let response = null;
+
+  try {
+
+    response = await removeHeroesFromTeamFromAPI(payload);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible du retrait le héro' }
+  }
+  return response
+}
+
 
 export default {
     getTeams,
-  createTeam
+  createTeam,
+  addHeroesToTeam,
+  removeHeroesFromTeam
 }

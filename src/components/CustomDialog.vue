@@ -5,20 +5,18 @@
     :persistent="persistent"
   >
     <v-card>
-      <!-- Header -->
+
       <v-card-title v-if="$slots.title || title">
         <slot name="title">
           {{ title }}
         </slot>
       </v-card-title>
 
-      <!-- Content -->
       <v-card-text>
         {{data}}
         <slot />
       </v-card-text>
 
-      <!-- Actions -->
       <v-card-actions v-if="$slots.actions">
         <v-spacer />
         <slot name="actions" />
@@ -42,7 +40,7 @@ defineProps({
     default: false
   },
   data:{
-    type:Object
+    type:[Object,String]
   }
 })
 

@@ -1,118 +1,229 @@
 <template>
   <v-container>
-    <!-- Organisation -->
-    <v-card v-if="team" >
-      <v-card-title>
-        {{ team.name }}
-        
+    <v-progress-linear v-if="loading" indeterminate class="mb-4" />
+
+    <v-card v-else-if="teamStore.currentTeam">
+      <v-card-title class="d-flex align-center justify-space-between">
+        {{ teamStore.currentTeam.name }}
+        <v-btn
+          size="small"
+          color="primary"
+          prepend-icon="mdi-plus"
+          @click="openAddMemberPanel"
+        >
+          Ajouter un membre
+        </v-btn>
       </v-card-title>
 
       <v-card-text>
-        <v-row>
-          <v-col cols="12" md="6">
-            <strong>ID :</strong> {{ team._id }}
-          </v-col>
+        <v-expand-transition>
+          <v-card v-if="showAddPanel" variant="outlined" class="mb-4 pa-3">
+            <v-tabs v-model="addTab">
+              <v-tab value="existing">Héro existant</v-tab>
+              <v-tab value="new">Nouveau héro</v-tab>
+            </v-tabs>
 
+            <v-window v-model="addTab" class="mt-3">
+              <v-window-item value="existing">
+                <v-select
+                  v-model="heroToAdd"
+                  :items="heroesStore.heroes"
+                  item-title="publicName"
+                  item-value="_id"
+                  label="Choisir un héro"
+                  return-object
+                />
+                <div class="d-flex gap-2 mt-2">
+                  <v-btn color="primary" :disabled="!heroToAdd" @click="addExistingHero">Valider</v-btn>
+                  <v-btn variant="text" @click="closeAddPanel">Annuler</v-btn>
+                </div>
+              </v-window-item>
 
+              <v-window-item value="new">
+                <v-text-field v-model="newHero.publicName" label="Nom public" required />
+                <v-text-field v-model="newHero.realName" label="Nom réel" />
+                <v-btn size="small" color="secondary" @click="addPower">+ Pouvoir</v-btn>
 
-          <v-col cols="12">
-            <strong>Équipe(s)</strong>
+                <v-row v-for="(power, i) in newHero.powers" :key="i" class="mt-1">
+                  <v-col cols="4"><v-text-field v-model="power.name" label="Pouvoir" dense /></v-col>
+                  <v-col cols="3"><v-text-field v-model.number="power.type" label="Type" type="number" min="1" max="7" dense /></v-col>
+                  <v-col cols="3"><v-text-field v-model.number="power.level" label="Niveau" type="number" min="0" max="100" dense /></v-col>
+                  <v-col cols="2"><v-btn icon="mdi-delete" color="red" size="small" @click="removePower(i)" /></v-col>
+                </v-row>
 
-            <v-list
-              v-if="team.members && team.members.length"
-              density="compact"
-            >
+                <div class="d-flex gap-2 mt-2">
+                  <v-btn color="primary" :disabled="!newHero.publicName" @click="createAndAddHero">Créer & Ajouter</v-btn>
+                  <v-btn variant="text" @click="closeAddPanel">Annuler</v-btn>
+                </div>
+              </v-window-item>
+            </v-window>
+          </v-card>
+        </v-expand-transition>
 
-              <v-list-item
-                v-for="item in team.members"
-                :key="item"
-              >
-                <v-list-item-title>
-                  {{ item }}
-                </v-list-item-title>
-                <v-btn>
-                  voir
-                </v-btn>
-                <v-btn @click="openDeleteDialog(item)">
-                  supprimer
-                </v-btn>
-              </v-list-item>
-            </v-list>
-
-            <div v-else>
-              Aucune équipe
+        <div v-if="teamStore.currentTeam.members.length">
+          <v-card
+            v-for="hero in teamStore.currentTeam.members"
+            :key="hero"
+            variant="outlined"
+            class="mb-2 pa-2"
+          >
+            <div class="d-flex align-center justify-space-between">
+              <div>
+                <strong>{{ heroesStore.getHeroById(hero)?.publicName }}</strong>
+                <span v-if="hero.realName" class="text-grey ml-2">({{ hero.realName }})</span>
+              </div>
+              <div>
+                <v-btn size="small" class="mr-1" @click="openEditDialog(hero)">Modifier</v-btn>
+                <v-btn size="small" color="error" @click="openRemoveDialog(hero)">Retirer</v-btn>
+              </div>
             </div>
-          </v-col>
-        </v-row>
+
+            <!-- Pouvoirs -->
+            <div v-if="hero.powers && hero.powers.length" class="mt-1">
+              <v-chip
+                v-for="p in hero.powers"
+                :key="p._id"
+                size="small"
+                class="mr-1 mt-1"
+              >
+                {{ p.name }} — {{ powerTypeName(p.type) }} Niv.{{ p.level }}
+              </v-chip>
+            </div>
+          </v-card>
+        </div>
+        <div v-else class="text-grey">Aucun membre</div>
       </v-card-text>
     </v-card>
-    <!-- Erreur -->
-    <v-alert
-      v-else
-      type="error"
-      variant="tonal"
-    >
-      équipe introuvable
-    </v-alert>
+
+    <v-alert v-else type="error" variant="tonal">Équipe introuvable</v-alert>
   </v-container>
 
   <custom-dialog
-    v-model="showDeleteDialog"
-    title="Supprimer l’équipe"
-    :data="selectedTeam"
-    @confirm="deleteTeam"
+    v-model="showEditDialog"
+    :title="editingHero ? `Modifier ${heroesStore.getHeroById(editingHero)?.publicName}` : ''"
+    :max-width="600"
   >
-    Cette action est définitive.
+    <template v-if="editingHero">
+      <v-text-field v-model="heroesStore.getHeroById(editingHero).publicName" label="Nom public" />
+      <v-text-field v-model="heroesStore.getHeroById(editingHero).realName" label="Nom réel" />
+      <v-btn size="small" color="secondary" class="mb-2" @click="addEditPower">+ Pouvoir</v-btn>
+      <v-row v-for="(p, i) in heroesStore.getHeroById(editingHero).powers" :key="i" class="mt-1">
+        <v-col cols="4"><v-text-field v-model="p.name" label="Pouvoir" density="compact" /></v-col>
+        <v-col cols="3"><v-text-field v-model.number="p.type" label="Type" type="number" min="1" max="7" density="compact" /></v-col>
+        <v-col cols="3"><v-text-field v-model.number="p.level" label="Niveau" type="number" min="0" max="100" density="compact" /></v-col>
+        <v-col cols="2"><v-btn icon="mdi-delete" color="red" size="small" @click="removeEditPower(i)" /></v-col>
+      </v-row>
+    </template>
 
     <template #actions>
-      <v-btn variant="text" @click="closeDeleteDialog">
-        annuler
-      </v-btn>
-
-      <v-btn color="error" @click="deleteTeam">
-        supprimer
-      </v-btn>
+      <v-btn variant="text" @click="showEditDialog = false">Annuler</v-btn>
+      <v-btn color="primary" @click="confirmEditHero">Valider</v-btn>
     </template>
   </custom-dialog>
 
+  <custom-dialog
+    v-model="showRemoveDialog"
+    title="Retirer le membre"
+    data=""
+  >
+    Confirmer le retrait de <strong>{{heroesStore.getHeroById(selectedMember)?.publicName }}</strong> de l'équipe ?
+    <template #actions>
+      <v-btn variant="text" @click="showRemoveDialog = false">Annuler</v-btn>
+      <v-btn color="error" @click="confirmRemoveMember">Retirer</v-btn>
+    </template>
+  </custom-dialog>
 </template>
 
 <script setup>
 import { onMounted, computed, ref } from 'vue'
-import {useRoute, useRouter} from 'vue-router'
-import { useTeamsStore} from '@/stores'
-import CustomDialog from "@/components/CustomDialog.vue";
+import { useRouter } from 'vue-router'
+import { useTeamsStore, useHeroesStore } from '@/stores'
+import CustomDialog from "@/components/CustomDialog.vue"
 
-const route = useRoute()
-const router = useRouter()
+const router      = useRouter()
+const teamStore   = useTeamsStore()
+const heroesStore = useHeroesStore()
 
-const teamStore = useTeamsStore()
+const loading = ref(false)
 
-const showDeleteDialog = ref(false)
-const selectedTeam = ref(null)
+const showAddPanel = ref(false)
+const addTab       = ref('existing')
+const heroToAdd    = ref(null)
+const editingHero    = ref(null)
+const newHero      = ref({ _id:editingHero,publicName: '', realName: '', powers: [] })
 
-const team = computed(() => teamStore.currentTeam)
+const showEditDialog = ref(false)
 
-function openDeleteDialog(team){
-  showDeleteDialog.value = true;
-  selectedTeam.value = team;
+
+const showRemoveDialog = ref(false)
+const selectedMember   = ref(null)
+
+const POWER_TYPES = ['', 'Force', 'Vitesse', 'Endurance', 'Magie', 'Effrayant', 'Furtivité', 'Stupidité']
+const powerTypeName = (type) => POWER_TYPES[type] || type
+
+async function loadMembers() {
+  console.log(teamStore.currentTeam)
+  loading.value = true
+
+  loading.value = false
 }
-function closeDeleteDialog(){
-  showDeleteDialog.value = false;
-}
 
-async function deleteTeam(){
-
-  showDeleteDialog.value = false
-}
-
-onMounted(async()=>{
-  if(!teamStore.currentTeam){
-    await router.push({name: 'teams'})
+onMounted(async () => {
+  if (!teamStore.currentTeam) {
+    await router.push({ name: 'teams' })
+    return
   }
+  await heroesStore.getHeroes()
+  await loadMembers()
 })
 
-</script>
+function openAddMemberPanel() {
+  heroToAdd.value = null
+  newHero.value = { publicName: '', realName: '', powers: [] }
+  showAddPanel.value = true
+}
+function closeAddPanel() { showAddPanel.value = false }
 
-<style scoped>
-</style>
+async function addExistingHero() {
+  if (!heroToAdd.value) return
+  await teamStore.addHeroesToTeam({ idHeroes: [heroToAdd.value._id], idTeam: teamStore.currentTeam._id })
+  await loadMembers()
+  closeAddPanel()
+}
+
+const addPower    = () => newHero.value.powers.push({ name: '', type: 1, level: 1 })
+const removePower = (i) => newHero.value.powers.splice(i, 1)
+
+async function createAndAddHero() {
+  await heroesStore.createHero(newHero.value)
+  const created = heroesStore.heroes.at(-1)
+  if (created) {
+    await teamStore.addHeroesToTeam({ idHeroes: [created._id], idTeam: teamStore.currentTeam._id })
+    await loadMembers()
+  }
+  closeAddPanel()
+}
+
+function openEditDialog(hero) {
+  editingHero.value = JSON.parse(JSON.stringify(hero))  // deep clone
+  showEditDialog.value = true
+}
+const addEditPower    = () => editingHero.value.powers.push({ name: '', type: 1, level: 1 })
+const removeEditPower = (i) => editingHero.value.powers.splice(i, 1)
+
+async function confirmEditHero() {
+  await heroesStore.updateHero(editingHero.value)
+  await loadMembers()
+  showEditDialog.value = false
+}
+
+function openRemoveDialog(hero) {
+  selectedMember.value   = hero
+  showRemoveDialog.value = true
+}
+async function confirmRemoveMember() {
+  await teamStore.removeHeroesFromTeam({ idHeroes: [selectedMember.value], idTeam: teamStore.currentTeam._id })
+  await loadMembers()
+  showRemoveDialog.value = false
+}
+</script>

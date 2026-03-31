@@ -53,18 +53,33 @@ async function createOrganization(data){
   return response
 }
 
-async function removeTeamFromAPI(data,secret){
-  console.log("ca supprime ouuu ??")
-  return patchRequest(`/herocorp/orgs/removeteam?org-secret=${secret}`,data,"DELETE-TEAM-FROM-ORG");
+async function removeTeamFromAPI(data){
+  return patchRequest(`/herocorp/orgs/removeteam`,data,"DELETE-TEAM-FROM-ORG");
 }
-async function removeTeam(data,secret){
+async function removeTeam(data){
   let response = null;
 
   try {
-    response = await removeTeamFromAPI(data,secret);
+    response = await removeTeamFromAPI(data);
   }
   catch(err) {
     response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible de supprimer l\'équipe de l\'organizations'  }
+  }
+  return response
+}
+
+
+async function addTeamFromAPI(data){
+  return patchRequest(`/herocorp/orgs/addteam`,data,"ADD-TEAM-TO-ORG");
+}
+async function addTeam(data){
+  let response = null;
+
+  try {
+    response = await addTeamFromAPI(data);
+  }
+  catch(err) {
+    response = {error: 1, status: 404, data: 'erreur rÃ©seau, impossible d\'ajouter l\'équipe de l\'organizations'  }
   }
   return response
 }
@@ -74,5 +89,6 @@ export default {
     getOrganizations,
     getOrganizationById,
   createOrganization,
-  removeTeam
+  removeTeam,
+  addTeam
 }

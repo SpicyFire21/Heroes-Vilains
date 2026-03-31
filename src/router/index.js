@@ -8,6 +8,7 @@ import currentTeamView from "@/views/currentTeamView.vue";
 import {useSecretStore} from "@/stores/index.js";
 import LoginView from "@/views/LoginView.vue";
 import HeroesView from "@/views/HeroesView.vue";
+import ProfilView from "@/views/ProfilView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,7 +41,11 @@ const router = createRouter({
       name: 'heroes',
       component: HeroesView
     },
-
+    {
+      path: '/profil',
+      name: 'profil',
+      component: ProfilView
+    },
     {
       path: '/teams',
       name: 'teams',

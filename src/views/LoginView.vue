@@ -38,15 +38,16 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import {useAuthStore, useOrganizationStore, useSecretStore} from '@/stores'
+import {useAuthStore, useHeroesStore, useOrganizationStore, useSecretStore} from '@/stores'
 
 const router = useRouter()
 const orgStore = useOrganizationStore()
 const authStore = useAuthStore()
+const heroesStore = useHeroesStore()
 
 const user = ref({
-  login:"",
-  password:""
+  login:"maddog",
+  password:"azer"
 })
 
 const login = async () => {

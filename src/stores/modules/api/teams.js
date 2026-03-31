@@ -10,7 +10,7 @@ export const useTeamsStore = defineStore('teams', () =>{
     //getter
     const getTeamById = (id) =>{
       const res = teams.value.find(t=>t._id === id)
-      console.log(res)
+
       return res
     }
 
@@ -26,7 +26,10 @@ export const useTeamsStore = defineStore('teams', () =>{
     const addTeam = (data) =>{
       teams.value.push(data)
     }
-
+    const setMembers = (data) =>{
+      currentTeam.value.members =data
+      console.log(currentTeam.value)
+    }
 
 
     //action
@@ -55,7 +58,33 @@ export const useTeamsStore = defineStore('teams', () =>{
     }
   }
 
+  const addHeroesToTeam = async (payload) =>{
+    try {
 
+      let response = await teamsService.addHeroesToTeam(payload);
+      console.log(response)
+      if (response.error === 0) {
+        setMembers(response.data.members);
+
+      }
+    } catch (error) {
+      console.error('store.js | Erreur lors de l\'ajout du hero', error);
+    }
+  }
+
+  const removeHeroesFromTeam = async (payload) =>{
+    try {
+
+      let response = await teamsService.removeHeroesFromTeam(payload);
+      console.log(response)
+      if (response.error === 0) {
+        setMembers(response.data.members);
+
+      }
+    } catch (error) {
+      console.error('store.js | Erreur lors du retrait du hero', error);
+    }
+  }
 
     return {
         //state
@@ -69,6 +98,8 @@ export const useTeamsStore = defineStore('teams', () =>{
 
         //action
         getTeams,
-        createTeam
+        createTeam,
+      addHeroesToTeam,
+      removeHeroesFromTeam
     }
 })

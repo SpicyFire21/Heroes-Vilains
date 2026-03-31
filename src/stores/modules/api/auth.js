@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import {useErrorStore} from "@/stores/index.js";
+import {useErrorStore, useHeroesStore} from "@/stores/index.js";
 import authService from "@/services/auth.service.js";
 
 
@@ -22,10 +22,11 @@ export const useAuthStore = defineStore('auth', () =>{
   const login = async (data) => {
     try {
       let response = await authService.login(data)
-
+      console.log(response)
       if (response.error === 0){
+
         updateXSRFToken(response.data.xsrfToken)
-        console.log(xsrfToken.value)
+       await useHeroesStore().getProfileByLogin(response.data.name)
       }
       return response;
     } catch (e) {

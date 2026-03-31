@@ -6,7 +6,7 @@
     <v-btn variant="outlined" @click="goTo('/secret')">
       Secret
     </v-btn>
-    <v-btn variant="outlined" v-if="authstore.xsrfToken">
+    <v-btn variant="outlined" @click="goTo('/profil')" v-if="authstore.xsrfToken">
       profil
     </v-btn>
     <v-btn variant="outlined" @click="goTo('/auth')">
